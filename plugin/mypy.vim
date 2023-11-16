@@ -7,29 +7,31 @@ if !exists('g:Mypy_enable') | let g:Mypy_enable = 1 | endif
 if !g:Mypy_enable || exists('g:Mypy_loaded') | finish | endif
 let g:Mypy_loaded = 1
 
-if !exists('g:Mypy_binary')
-    let g:Mypy_binary = 'mypy'
+if !exists('g:Mypy_binary_candidates')
+    let g:Mypy_binary_candidates = ['mypy']
 endif
-if !exists('g:Mypy_python_binary')
-    let g:Mypy_python_binary = 'python3'
+if !exists('g:Mypy_python_binary_candidates')
+    let g:Mypy_python_binary_candidates = ['python3', 'python']
 endif
 if !exists('g:Mypy_python_version')
-    let g:Mypy_python_version = substitute(
-                \ system(g:Mypy_python_binary.' --version'),
-                \ '.*Python \(\d.\d\{1,2}\).\d*.*', '\1', '')
+    " This could be defined to override automatic mode
 endif
 if !exists('g:Mypy_args_strict')
-    let g:Mypy_args_strict = [
+    let g:Mypy_args_strict = {v -> [
+                \ '--python-version '.v,
                 \ '--follow-imports=normal',
-                \ '--python-version '.g:Mypy_python_version,
                 \ '--install-types',
-                \ ]
+                \ ]}
 endif
 if !exists('g:Mypy_args')
-    let g:Mypy_args = [
+    let g:Mypy_args = {v -> [
+                \ '--python-version '.v,
                 \ '--follow-imports=skip',
                 \ '--disable-error-code=import',
-                \ '--python-version '.g:Mypy_python_version,
-                \ ]
+                \ '--show-error-context',
+                \ '--show-column-numbers',
+                \ '--show-error-end',
+                \ '--pretty',
+                \ ]}
 endif
 
